@@ -1,2 +1,0 @@
-/cygdrive/k/code_study/dfs/kosmosfs/src/cc/qcdio/CMakeFiles/qcdio.dir
-/cygdrive/k/code_study/dfs/kosmosfs/src/cc/qcdio/CMakeFiles/qcdio-shared.dir
