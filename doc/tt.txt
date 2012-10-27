@@ -1,0 +1,3 @@
+nm lib/libkfsClient.so  | fgrep Seek | c++filt
+
+Unable to join multicast group for receving telemetry data: No such device
