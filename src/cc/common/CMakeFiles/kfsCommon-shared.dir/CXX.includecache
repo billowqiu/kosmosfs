@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/hgfs/F/opensource/network/distributed/dfs/kosmosfs/src/cc/common/Version.cc
+Version.h
+/mnt/hgfs/F/opensource/network/distributed/dfs/kosmosfs/src/cc/common/Version.h
+
+/mnt/hgfs/F/opensource/network/distributed/dfs/kosmosfs/src/cc/common/Version.h
+string
+-
+

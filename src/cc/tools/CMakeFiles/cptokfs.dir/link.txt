@@ -1,0 +1,1 @@
+/usr/bin/c++    -Wall -DBOOST_SP_USE_QUICK_ALLOCATOR -O2 -g    CMakeFiles/cptokfs.dir/cptokfs_main.o  -o cptokfs -rdynamic libtools.a ../libkfsClient/libkfsClient.a ../libkfsIO/libkfsIO.a ../common/libkfsCommon.a -lpthread /usr/local/lib/libboost_regex.a -lz ../qcdio/libqcdio.a -lrt -lcrypto 

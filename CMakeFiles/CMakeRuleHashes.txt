@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+1380f408c4d0e8c15be78adf9a61e21e src/cc/common/CMakeFiles/Version.cc
