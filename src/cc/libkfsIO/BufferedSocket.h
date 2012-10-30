@@ -45,8 +45,8 @@ public:
     {
         Reset();
     }
-    BufferedSocket(int fd)
-        :TcpSocket(fd)
+    BufferedSocket(int fd):
+    TcpSocket(fd)
     {
         Reset();
     }

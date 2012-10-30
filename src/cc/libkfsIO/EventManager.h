@@ -60,15 +60,15 @@ public:
     /// @param[in] afterMs # of milli-seconds after which the event
     /// should be executed.
     ///
-    void	Schedule(EventPtr &event, int afterMs);
+    void Schedule(EventPtr &event, int afterMs);
 
     /// Register a timeout handler with the NetManager.  The
     /// NetManager will call the handler whenever a timeout occurs.
-    void 	Init();
+    void Init();
 
     /// Whenever a timeout occurs, walk the list of scheduled events
     /// to determine if any need to be signaled.
-    void 	Timeout();
+    void Timeout();
 
 private:
 
@@ -82,11 +82,11 @@ private:
 
     /// Index into the above array that points to where we are
     /// currently.
-    int			mCurrentSlot;
+    int mCurrentSlot;
 
     /// Events for which the time of occurence is after the last slot
     /// (i.e., after 20 seconds).
-    std::list <EventPtr>	mLongtermEvents;
+    std::list <EventPtr> mLongtermEvents;
 };
 
 ///
@@ -109,7 +109,6 @@ public:
 private:
     /// Owning object.
     EventManager		*mEventManager;
-
 };
 
 }

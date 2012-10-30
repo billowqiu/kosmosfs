@@ -39,14 +39,15 @@ EventManager::EventManager()
 EventManager::~EventManager()
 {
     for (int i = 0; i < MAX_EVENT_SLOTS; i++)
+    {
         mSlots[i].clear();
+    }
 
     mLongtermEvents.clear();
     delete mEventManagerTimeoutImpl;
 }
 
-void
-EventManager::Init()
+void EventManager::Init()
 {
     // The event manager schedules events at 10ms granularity.
     mEventManagerTimeoutImpl->SetTimeoutInterval(EVENT_GRANULARITY_MS);
@@ -62,9 +63,13 @@ void EventManager::Schedule(EventPtr &event, int afterMs)
     event->SetStatus(EVENT_SCHEDULED);
 
     if (afterMs <= 0)
+    {
         slotDelta = 1;
+    }
     else
+    {
         slotDelta = afterMs / EVENT_GRANULARITY_MS;
+    }
 
     if (slotDelta > MAX_EVENT_SLOTS)
     {
@@ -74,7 +79,6 @@ void EventManager::Schedule(EventPtr &event, int afterMs)
     }
     int slot = (mCurrentSlot + slotDelta) % MAX_EVENT_SLOTS;
     mSlots[slot].push_back(event);
-
 }
 
 void EventManager::Timeout()
@@ -90,13 +94,16 @@ void EventManager::Timeout()
         event->EventOccurred();
         // Reschedule it if it is a periodic event
         if (event->IsPeriodic())
+        {
             Schedule(event, event->GetTimeout());
-
+        }
     }
     mSlots[mCurrentSlot].clear();
     mCurrentSlot++;
     if (mCurrentSlot == MAX_EVENT_SLOTS)
+    {
         mCurrentSlot = 0;
+    }
 
     /*
     if ((mLongtermEvents.size() > 0) &&
@@ -113,7 +120,9 @@ void EventManager::Timeout()
         // count down for each ms that ticks by
         waitMs = event->DecLongtermWait(msElapsed);
         if (waitMs < 0)
+        {
             waitMs = 0;
+        }
         if (waitMs >= MAX_EVENT_SLOTS)
         {
             ++iter;
@@ -125,5 +134,4 @@ void EventManager::Timeout()
         ++iter;
         mLongtermEvents.erase(eltToRemove);
     }
-
 }

@@ -32,8 +32,7 @@
 using namespace KFS;
 using std::string;
 
-int
-BufferedSocket::ReadLine(string &result)
+int BufferedSocket::ReadLine(string &result)
 {
     int navail, nread = 0;
     char *lineEnd;

@@ -43,9 +43,7 @@ public:
     public:
         // FIXME: Currently invoked without dropping the lock: deadlock prone,
         // fix later if required.
-        virtual void Release(
-            RefillReqId inReqId,
-            int         inBufCount) = 0;
+        virtual void Release(RefillReqId inReqId, int inBufCount) = 0;
         virtual bool Unregister();
         QCIoBufferPool* GetPoolPtr() const
         {
@@ -83,8 +81,7 @@ public:
     class OutputIterator
     {
     public:
-        virtual void Put(
-            char* inBufPtr) = 0;
+        virtual void Put(char* inBufPtr) = 0;
     protected:
         OutputIterator()
         {}
@@ -94,27 +91,19 @@ public:
 
     QCIoBufferPool();
     ~QCIoBufferPool();
-    int Create(
-        int          inPartitionCount,
-        int          inPartitionBufferCount,
-        int          inBufferSize,
-        bool         inLockMemoryFlag);
+    int Create(int inPartitionCount,
+			   int inPartitionBufferCount,
+			   int inBufferSize,
+			   bool inLockMemoryFlag);
     void Destroy();
-    char* Get(
-        RefillReqId inRefillReqId = kRefillReqIdUndefined);
-    bool Get(
-        OutputIterator& inIt,
-        int             inBufCnt,
-        RefillReqId     inRefillReqId = kRefillReqIdUndefined);
-    void Put(
-        char* inBufPtr);
-    void Put(
-        InputIterator& inIt,
-        int            inBufCnt);
-    bool Register(
-        Client& inClient);
-    bool UnRegister(
-        Client& inClient);
+    char* Get(RefillReqId inRefillReqId = kRefillReqIdUndefined);
+    bool Get(OutputIterator& inIt, 
+			 int inBufCnt,
+			 RefillReqId inRefillReqId = kRefillReqIdUndefined);
+    void Put(char* inBufPtr);
+    void Put(InputIterator& inIt, int inBufCnt);
+    bool Register(Client& inClient);
+    bool UnRegister(Client& inClient);
     int GetBufferSize() const
     {
         return mBufferSize;
@@ -129,18 +118,13 @@ private:
     int        mBufferSize;
     int        mFreeCnt;
 
-    bool TryToRefill(
-        RefillReqId inReqId,
-        int         inBufCnt);
-    void PutSelf(
-        char* inBufPtr);
+    bool TryToRefill(RefillReqId inReqId, int inBufCnt);
+    void PutSelf(char* inBufPtr);
 
 public:
     // No copies.
-    QCIoBufferPool(
-        const QCIoBufferPool& inPool);
-    QCIoBufferPool& operator=(
-        const QCIoBufferPool& inPool);
+    QCIoBufferPool(const QCIoBufferPool& inPool);
+    QCIoBufferPool& operator=(const QCIoBufferPool& inPool);
 };
 
 #endif /* QCIOBUFFERPOOL_H */

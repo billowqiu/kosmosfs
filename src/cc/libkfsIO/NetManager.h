@@ -232,34 +232,34 @@ private:
     enum { kTimerWheelSize = (1 << 8) };
 
     /// Timer wheel.
-    List                mTimerWheel[kTimerWheelSize + 1];
-    List                mRemove;
-    List::iterator      mTimerWheelBucketItr;
-    NetConnection*      mCurConnection;
-    int                 mCurTimerWheelSlot;
-    int                 mConnectionsCount;
+    List mTimerWheel[kTimerWheelSize + 1];
+    List mRemove;
+    List::iterator mTimerWheelBucketItr;
+    NetConnection* mCurConnection;
+    int mCurTimerWheelSlot;
+    int mConnectionsCount;
     /// when the system is overloaded--either because of disk or we
     /// have too much network I/O backlogged---we avoid polling fd's for
     /// read.  this causes back-pressure and forces the clients to
     /// slow down
-    bool		mDiskOverloaded;
-    bool		mNetworkOverloaded;
-    bool                mIsOverloaded;
-    volatile bool       mRunFlag;
-    bool                mShutdownFlag;
-    bool                mTimerRunningFlag;
-    bool                mIsForkedChild;
+    bool mDiskOverloaded;
+    bool mNetworkOverloaded;
+    bool mIsOverloaded;
+    volatile bool mRunFlag;
+    bool mShutdownFlag;
+    bool mTimerRunningFlag;
+    bool mIsForkedChild;
     /// timeout interval specified in the call to select().
-    const int           mTimeoutMs;
-    const time_t        mStartTime;
-    time_t              mNow;
-    int64_t		        mMaxOutgoingBacklog;
-    int64_t             mNumBytesToSend;
-    int64_t             mTimerOverrunCount;
-    int64_t             mTimerOverrunSec;
-    QCFdPoll&           mPoll;
-    Waker&              mWaker;
-    PollEventHook*      mPollEventHook;
+    const int mTimeoutMs;
+    const time_t mStartTime;
+    time_t mNow;
+    int64_t mMaxOutgoingBacklog;
+    int64_t mNumBytesToSend;
+    int64_t mTimerOverrunCount;
+    int64_t mTimerOverrunSec;
+    QCFdPoll& mPoll;
+    Waker& mWaker;
+    PollEventHook* mPollEventHook;
 
     /// Handlers that are notified whenever a call to select()
     /// returns.  To the handlers, the notification is a timeout signal.

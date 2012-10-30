@@ -92,7 +92,9 @@ public:
     int EventOccurred()
     {
         if (mEventStatus == EVENT_CANCELLED)
+        {
             return 0;
+        }
         mEventStatus = EVENT_DONE;
         return mCallbackObj->HandleEvent(EVENT_TIMEOUT, mEventData);
     }
@@ -121,7 +123,9 @@ public:
     {
         mLongtermWait -= numMs;
         if (mLongtermWait < 0)
+        {
             mLongtermWait = 0;
+        }
         return mLongtermWait;
     }
 

@@ -83,8 +83,8 @@ public:
 
     // save pointer to object and method
     ObjectMethod( T* optr, MethodPtr mptr ):
-        mOptr(optr),
-        mMptr(mptr)
+    mOptr(optr),
+    mMptr(mptr)
     {
     }
 
@@ -94,8 +94,8 @@ public:
     }
 
 private:
-    T* 		mOptr;      // pointer to the object
-    MethodPtr	mMptr;	// pointer to the method
+    T* mOptr;      // pointer to the object
+    MethodPtr mMptr;	// pointer to the method
 };
 
 ///
@@ -118,7 +118,7 @@ class KfsCallbackObj : public _force_vfp_to_top
 {
 public:
     KfsCallbackObj():
-        mObjMeth(0)
+    mObjMeth(0)
     {
     }
 
@@ -150,11 +150,12 @@ public:
         }
         mObjMeth = ::new (&mObjMethodStorage) ObjectMethod<T>(pobj, meth);
     }
+
 private:
     struct
     {
         char mStorage[sizeof(ObjectMethod<ObjectMethodBase>)];
-    } mObjMethodStorage;
+    }mObjMethodStorage;
     ObjectMethodBase *mObjMeth;
 };
 

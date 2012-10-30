@@ -34,9 +34,9 @@ using namespace KFS;
 class NetKicker::Impl
 {
 public:
-    Impl()
-        :mMutex(),
-         mWritten(0)
+    Impl():
+    mMutex(),
+    mWritten(0)
     {
         const int res = pipe(mPipeFds);
         if (res < 0)
@@ -49,6 +49,7 @@ public:
         fcntl(mPipeFds[0], F_SETFL, O_NONBLOCK);
         fcntl(mPipeFds[1], F_SETFL, O_NONBLOCK);
     }
+
     void Kick()
     {
         QCStMutexLocker lock(mMutex);
@@ -60,6 +61,7 @@ public:
             write(mPipeFds[1], &buf, sizeof(buf));
         }
     }
+
     int Drain()
     {
         QCStMutexLocker lock(mMutex);
@@ -95,9 +97,10 @@ private:
     Impl& operator=(const Impl&);
 };
 
-NetKicker::NetKicker()
-    : mImpl(*new Impl())
-{}
+NetKicker::NetKicker(): 
+mImpl(*new Impl())
+{
+}
 
 NetKicker::~NetKicker()
 {

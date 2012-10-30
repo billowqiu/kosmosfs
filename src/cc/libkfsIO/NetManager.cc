@@ -160,27 +160,24 @@ NetManager::~NetManager()
     delete &mWaker;
 }
 
-void
-NetManager::AddConnection(NetConnectionPtr &conn)
+void NetManager::AddConnection(NetConnectionPtr &conn)
 {
     if (mShutdownFlag)
     {
         return;
     }
-    NetConnection::NetManagerEntry* const entry =
-        conn->GetNetManagerEntry();
-    if (! entry)
+    NetConnection::NetManagerEntry* const entry = conn->GetNetManagerEntry();
+    if (!entry)
     {
         return;
     }
     if (entry->mNetManager && entry->mNetManager != this)
     {
-        KFS_LOG_STREAM_FATAL <<
-                             "attempt to add connection to different net manager" <<
-                             KFS_LOG_EOM;
+        KFS_LOG_STREAM_FATAL << "attempt to add connection to different net manager" 
+                             << KFS_LOG_EOM;
         abort();
     }
-    if (! entry->mAdded)
+    if (!entry->mAdded)
     {
         entry->mTimerWheelSlot = kTimerWheelSize;
         entry->mListIt = mTimerWheel[kTimerWheelSize].insert(
@@ -197,12 +194,12 @@ NetManager::AddConnection(NetConnectionPtr &conn)
     conn->Update();
 }
 
-void
-NetManager::RegisterTimeoutHandler(ITimeout *handler)
+void NetManager::RegisterTimeoutHandler(ITimeout *handler)
 {
     list<ITimeout *>::iterator iter;
-    for (iter = mTimeoutHandlers.begin(); iter != mTimeoutHandlers.end();
-            ++iter)
+    for (iter = mTimeoutHandlers.begin(); 
+         iter != mTimeoutHandlers.end();
+         ++iter)
     {
         if (*iter == handler)
         {
@@ -219,8 +216,9 @@ NetManager::UnRegisterTimeoutHandler(ITimeout *handler)
         return;
 
     list<ITimeout *>::iterator iter;
-    for (iter = mTimeoutHandlers.begin(); iter != mTimeoutHandlers.end();
-            ++iter)
+    for (iter = mTimeoutHandlers.begin(); 
+         iter != mTimeoutHandlers.end();
+         ++iter)
     {
         if (*iter == handler)
         {
@@ -277,8 +275,7 @@ inline static int CheckFatalSysError(int err, const char* msg)
     return err;
 }
 
-void
-NetManager::Update(NetConnection::NetManagerEntry& entry, int fd, bool resetTimer)
+void NetManager::Update(NetConnection::NetManagerEntry& entry, int fd, bool resetTimer)
 {
     if (entry.mNetManager)
     {
@@ -302,9 +299,8 @@ NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool reset
     {
         if (entry.mFd >= 0)
         {
-            CheckFatalSysError(
-                mPoll.Remove(entry.mFd),
-                "failed to removed fd from poll set"
+            CheckFatalSysError(mPoll.Remove(entry.mFd),
+                               "failed to removed fd from poll set"
             );
             entry.mFd = -1;
         }
@@ -357,39 +353,33 @@ NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool reset
     if (in != entry.mIn || out != entry.mOut)
     {
         assert(fd >= 0);
-        const int op =
-            (in ? QCFdPoll::kOpTypeIn : 0) + (out ? QCFdPoll::kOpTypeOut : 0);
+        const int op = (in ? QCFdPoll::kOpTypeIn : 0) 
+                       + (out ? QCFdPoll::kOpTypeOut : 0);
         if ((fd != entry.mFd || op == 0) && entry.mFd >= 0)
         {
-            CheckFatalSysError(
-                mPoll.Remove(entry.mFd),
-                "failed to removed fd from poll set"
-            );
+            CheckFatalSysError(mPoll.Remove(entry.mFd),
+                               "failed to removed fd from poll set");
             entry.mFd = -1;
         }
         if (entry.mFd < 0)
         {
-            if (op && CheckFatalSysError(
-                        mPoll.Add(fd, op, &conn),
-                        "failed to add fd to poll set") == 0)
+            if (op && CheckFatalSysError(mPoll.Add(fd, op, &conn), 
+                                         "failed to add fd to poll set") == 0)
             {
                 entry.mFd = fd;
             }
         }
         else
         {
-            CheckFatalSysError(
-                mPoll.Set(fd, op, &conn),
-                "failed to change pool flags"
-            );
+            CheckFatalSysError(mPoll.Set(fd, op, &conn),
+                               "failed to change pool flags");
         }
         entry.mIn  = in  && entry.mFd >= 0;
         entry.mOut = out && entry.mFd >= 0;
     }
 }
 
-void
-NetManager::Wakeup()
+void NetManager::Wakeup()
 {
     mWaker.Wakeup();
 }
