@@ -34,10 +34,13 @@ set (exe_files metaserver logcompactor filelister kfsfsck)
 foreach (exe_file ${exe_files})
         add_executable (${exe_file} ${exe_file}_main.cc)
         if (USE_STATIC_LIB_LINKAGE)
-           target_link_libraries (${exe_file} kfsMeta kfsIO kfsCommon qcdio pthread crypto)
+           target_link_libraries (${exe_file} kfsMeta kfsIO kfsCommon qcdio
+               pthread crypto boost_system boost_filesystem)
            add_dependencies (${exe_file} kfsCommon kfsIO kfsMeta qcdio)
         else (USE_STATIC_LIB_LINKAGE)
-           target_link_libraries (${exe_file} kfsMeta-shared kfsIO-shared kfsCommon-shared qcdio-shared pthread crypto)
+           target_link_libraries (${exe_file} kfsMeta-shared kfsIO-shared
+               kfsCommon-shared qcdio-shared pthread crypto boost_system
+               boost_filesystem)
            add_dependencies (${exe_file} kfsCommon-shared kfsIO-shared kfsMeta-shared qcdio-shared)
         endif (USE_STATIC_LIB_LINKAGE)
 endforeach (exe_file)

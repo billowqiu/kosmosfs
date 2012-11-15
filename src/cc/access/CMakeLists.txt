@@ -2,7 +2,7 @@
 # Take all the .cc files and build a library out of them
 add_library (kfs_access SHARED KfsAccessJni.cc)
 add_dependencies (kfs_access kfsClient-shared)
-target_link_libraries (kfs_access kfsClient-shared)
+target_link_libraries (kfs_access kfsClient-shared boost_system boost_filesystem)
 if (NOT APPLE)
   target_link_libraries(kfs_access rt)
 endif (NOT APPLE)

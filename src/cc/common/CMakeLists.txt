@@ -27,8 +27,8 @@ set_target_properties (kfsCommon-shared PROPERTIES OUTPUT_NAME "kfsCommon")
 set_target_properties (kfsCommon PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 set_target_properties (kfsCommon-shared PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 
-target_link_libraries (kfsCommon qcdio ${Log4cpp_LIBRARY} pthread)
-target_link_libraries (kfsCommon-shared qcdio-shared ${Log4cpp_LIBRARY} pthread)
+target_link_libraries (kfsCommon qcdio ${Log4cpp_LIBRARY} pthread boost_system boost_filesystem)
+target_link_libraries (kfsCommon-shared qcdio-shared ${Log4cpp_LIBRARY} pthread boost_system boost_filesystem)
 
 #
 install (TARGETS kfsCommon-shared kfsCommon

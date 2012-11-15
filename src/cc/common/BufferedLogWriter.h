@@ -56,63 +56,48 @@ public:
         int64_t mAppendWaitCount;
         int64_t mAppendWaitMicroSecs;
     };
-    BufferedLogWriter(
-        int         inFd                        = -1,
-        const char* inFileNamePtr               = 0,
-        int         inBufSize                   = 1 << 20,
-        const char* inTrucatedSuffixPtr         = 0,
-        int64_t     inOpenRetryIntervalMicroSec = 5000000,
-        int64_t     inFlushIntervalMicroSec     = 1000000,
-        int64_t     inMaxLogFileSize            = -1,
-        int         inMaxLogsFiles              = -1,
-        LogLevel    inLogLevel                  = kLogLevelDEBUG,
-        int64_t     inMaxLogWaitTimeMicroSec    = -1,
-        const char* inTimeStampFormatPtr        = 0,      // see strftime
-        bool        inUseGMTFlag                = false); // GMT vs local
+    BufferedLogWriter(int inFd = -1,
+					  const char* inFileNamePtr = 0,
+					  int inBufSize = 1 << 20,
+					  const char* inTrucatedSuffixPtr = 0,
+					  int64_t inOpenRetryIntervalMicroSec = 5000000,
+					  int64_t inFlushIntervalMicroSec = 1000000,
+					  int64_t inMaxLogFileSize = -1,
+					  int inMaxLogsFiles = -1,
+					  LogLevel inLogLevel = kLogLevelDEBUG,
+					  int64_t inMaxLogWaitTimeMicroSec = -1,
+					  const char* inTimeStampFormatPtr = 0,      // see strftime
+					  bool inUseGMTFlag = false); // GMT vs local
     ~BufferedLogWriter();
-    void SetParameters(
-        const Properties& inProps,
-        const char*       inPropsPrefixPtr = 0);
+    void SetParameters(const Properties& inProps, const char* inPropsPrefixPtr = 0);
     bool Reopen();
     void Close();
     void Stop();
-    int Open(
-        const char* inFileNamePtr,
-        int         inOpenMode,
-        int         inOpenFlags,
-        bool        inOpenHereFlag = false);
-    int Open(
-        const char* inFileNamePtr);
-    bool AddLogFileNamePrefix(
-        const char* inFileNamePtr);
+    int Open(const char* inFileNamePtr,
+			 int inOpenMode,
+			 int inOpenFlags,
+			 bool inOpenHereFlag = false);
+    int Open(const char* inFileNamePtr);
+    bool AddLogFileNamePrefix(const char* inFileNamePtr);
     void ClearLogFileNamePrefixes();
     void Flush();
-    void SetMaxLogWaitTime(
-        int64_t inMaxLogWaitTimeMicroSec);
-    void SetFlushInterval(
-        int64_t inMicroSecs);
-    void SetLogLevel(
-        LogLevel inLogLevel)
+    void SetMaxLogWaitTime(int64_t inMaxLogWaitTimeMicroSec);
+    void SetFlushInterval(int64_t inMicroSecs);
+    void SetLogLevel(LogLevel inLogLevel)
     {
         mLogLevel = inLogLevel;
     }
-    bool SetLogLevel(
-        const char* inLogLevelNamePtr);
+    bool SetLogLevel(const char* inLogLevelNamePtr);
     LogLevel GetLogLevel() const
     {
         return mLogLevel;
     }
-    static const char* GetLogLevelNamePtr(
-        LogLevel inLogLevel);
-    bool IsLogLevelEnabled(
-        LogLevel inLogLevel) const
+    static const char* GetLogLevelNamePtr(LogLevel inLogLevel);
+    bool IsLogLevelEnabled(LogLevel inLogLevel) const
     {
         return (mLogLevel >= inLogLevel);
     }
-    void Append(
-        LogLevel    inLogLevel,
-        const char* inFmtStrPtr,
-        ...)
+    void Append(LogLevel inLogLevel, const char* inFmtStrPtr, ...)
     {
         if (mLogLevel < inLogLevel)
         {
@@ -123,22 +108,18 @@ public:
         Append(inLogLevel, inFmtStrPtr, theArgs);
         va_end(theArgs);
     }
-    void Append(
-        LogLevel    inLogLevel,
-        const char* inFmtStrPtr,
-        va_list     inArgs);
-    void GetCounters(
-        Counters& outCounters);
+    void Append(LogLevel inLogLevel,
+				const char* inFmtStrPtr,
+				va_list inArgs);
+    void GetCounters(Counters& outCounters);
 private:
     class Impl;
     volatile LogLevel mLogLevel;
     Impl&             mImpl;
 
 private:
-    BufferedLogWriter(
-        const BufferedLogWriter& inWriter);
-    BufferedLogWriter& operator=(
-        const BufferedLogWriter& inWriter);
+    BufferedLogWriter(const BufferedLogWriter& inWriter);
+    BufferedLogWriter& operator=(const BufferedLogWriter& inWriter);
 };
 }
 
