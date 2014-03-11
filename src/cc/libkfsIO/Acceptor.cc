@@ -67,13 +67,13 @@ Acceptor::~Acceptor()
 
 void Acceptor::Listen()
 {
-    if (! mNetManager.IsRunning())
+    if(!mNetManager.IsRunning())
     {
         return;
     }
     TcpSocket * const sock = new TcpSocket();
     const int res = sock->Listen(mPort);
-    if (res < 0)
+    if(res < 0)
     {
         KFS_LOG_STREAM_FATAL << "Unable to bind to port: " << mPort
                              << " error: " << QCUtils::SysError(res)
@@ -119,10 +119,11 @@ Acceptor::RecvConnection(int code, void *data)
             }
         }
         return 0;
+
     case EVENT_INACTIVITY_TIMEOUT:
-        KFS_LOG_STREAM_DEBUG << "acceptror inactivity timeout event ignored" <<
-                             KFS_LOG_EOM;
+        KFS_LOG_STREAM_DEBUG << "acceptror inactivity timeout event ignored" << KFS_LOG_EOM;
         return 0;
+
     default:
         KFS_LOG_STREAM_FATAL <<
                              "Unexpected event code: " << code <<

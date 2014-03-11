@@ -41,17 +41,17 @@ public:
     ClientManager()
     {
         mAcceptor = NULL;
-    };
+    }
 
     virtual ~ClientManager()
     {
         delete mAcceptor;
-    };
+    }
 
     void StartAcceptor(int port)
     {
         mAcceptor = new Acceptor(port, this);
-    };
+    }
 
     KfsCallbackObj *CreateKfsCallbackObj(NetConnectionPtr &conn)
     {
