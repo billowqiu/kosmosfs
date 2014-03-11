@@ -173,7 +173,7 @@ void NetManager::AddConnection(NetConnectionPtr &conn)
     }
     if (entry->mNetManager && entry->mNetManager != this)
     {
-        KFS_LOG_STREAM_FATAL << "attempt to add connection to different net manager" 
+        KFS_LOG_STREAM_FATAL << "attempt to add connection to different net manager"
                              << KFS_LOG_EOM;
         abort();
     }
@@ -197,7 +197,7 @@ void NetManager::AddConnection(NetConnectionPtr &conn)
 void NetManager::RegisterTimeoutHandler(ITimeout *handler)
 {
     list<ITimeout *>::iterator iter;
-    for (iter = mTimeoutHandlers.begin(); 
+    for (iter = mTimeoutHandlers.begin();
          iter != mTimeoutHandlers.end();
          ++iter)
     {
@@ -216,7 +216,7 @@ NetManager::UnRegisterTimeoutHandler(ITimeout *handler)
         return;
 
     list<ITimeout *>::iterator iter;
-    for (iter = mTimeoutHandlers.begin(); 
+    for (iter = mTimeoutHandlers.begin();
          iter != mTimeoutHandlers.end();
          ++iter)
     {
@@ -230,8 +230,7 @@ NetManager::UnRegisterTimeoutHandler(ITimeout *handler)
     }
 }
 
-inline void
-NetManager::UpdateTimer(NetConnection::NetManagerEntry& entry, int timeOut)
+inline void NetManager::UpdateTimer(NetConnection::NetManagerEntry& entry, int timeOut)
 {
     assert(entry.mAdded);
 
@@ -258,9 +257,8 @@ NetManager::UpdateTimer(NetConnection::NetManagerEntry& entry, int timeOut)
         {
             ++mTimerWheelBucketItr;
         }
-        mTimerWheel[timerWheelSlot].splice(
-            mTimerWheel[timerWheelSlot].end(),
-            mTimerWheel[entry.mTimerWheelSlot], entry.mListIt);
+        mTimerWheel[timerWheelSlot].splice(mTimerWheel[timerWheelSlot].end(),
+                                           mTimerWheel[entry.mTimerWheelSlot], entry.mListIt);
         entry.mTimerWheelSlot = timerWheelSlot;
     }
 }
@@ -277,16 +275,15 @@ inline static int CheckFatalSysError(int err, const char* msg)
 
 void NetManager::Update(NetConnection::NetManagerEntry& entry, int fd, bool resetTimer)
 {
-    if (entry.mNetManager)
+    if(entry.mNetManager)
     {
         entry.mNetManager->UpdateSelf(entry, fd, resetTimer);
     }
 }
 
-void
-NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool resetTimer)
+void NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool resetTimer)
 {
-    if ((! entry.mAdded) || mIsForkedChild)
+    if((!entry.mAdded) || mIsForkedChild)
     {
         return;
     }
@@ -295,13 +292,11 @@ NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool reset
     assert(fd >= 0 || ! conn.IsGood());
     // Always check if connection has to be removed: this method always
     // called before socket fd gets closed.
-    if (! conn.IsGood() || fd < 0)
+    if(!conn.IsGood() || fd < 0)
     {
         if (entry.mFd >= 0)
         {
-            CheckFatalSysError(mPoll.Remove(entry.mFd),
-                               "failed to removed fd from poll set"
-            );
+            CheckFatalSysError(mPoll.Remove(entry.mFd), "failed to removed fd from poll set");
             entry.mFd = -1;
         }
         assert(mConnectionsCount > 0 &&
@@ -331,10 +326,10 @@ NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool reset
         return;
     }
     // Update timer.
-    if (resetTimer)
+    if(resetTimer)
     {
         const int timeOut = conn.GetInactivityTimeout();
-        if (timeOut >= 0)
+        if(timeOut >= 0)
         {
             entry.mExpirationTime = mNow + timeOut;
         }
@@ -348,13 +343,15 @@ NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool reset
     mNumBytesToSend += entry.mWriteByteCount;
     // Update poll set.
     const bool in  = conn.IsReadReady() &&
-                     (! mIsOverloaded || entry.mEnableReadIfOverloaded);
+                     (!mIsOverloaded || entry.mEnableReadIfOverloaded);
+    //如果没有数据可写，下面就会清除掉写事件
     const bool out = conn.IsWriteReady() || entry.mConnectPending;
-    if (in != entry.mIn || out != entry.mOut)
+    //第一次会进到下面的分支；后面如果出现数据读写状态变化也会进入
+    //比如没有数据可写，inbuf满了，不可读
+    if(in != entry.mIn || out != entry.mOut)
     {
         assert(fd >= 0);
-        const int op = (in ? QCFdPoll::kOpTypeIn : 0) 
-                       + (out ? QCFdPoll::kOpTypeOut : 0);
+        const int op = (in ? QCFdPoll::kOpTypeIn : 0) + (out ? QCFdPoll::kOpTypeOut : 0);
         if ((fd != entry.mFd || op == 0) && entry.mFd >= 0)
         {
             CheckFatalSysError(mPoll.Remove(entry.mFd),
@@ -363,9 +360,10 @@ NetManager::UpdateSelf(NetConnection::NetManagerEntry& entry, int fd, bool reset
         }
         if (entry.mFd < 0)
         {
-            if (op && CheckFatalSysError(mPoll.Add(fd, op, &conn), 
+            if (op && CheckFatalSysError(mPoll.Add(fd, op, &conn),
                                          "failed to add fd to poll set") == 0)
             {
+                //添加之后就赋值，以后都只会进行下面的Set操作
                 entry.mFd = fd;
             }
         }
@@ -384,27 +382,24 @@ void NetManager::Wakeup()
     mWaker.Wakeup();
 }
 
-void
-NetManager::MainLoop()
+void NetManager::MainLoop()
 {
     mNow = time(0);
     time_t lastTimerTime = mNow;
     CheckFatalSysError(mPoll.Add(mWaker.GetFd(), QCFdPoll::kOpTypeIn),
                       "failed to add net waker's fd to the poll set");
-    
+
     const int timerOverrunWarningTime(mTimeoutMs / (1000/2));
     while (mRunFlag)
     {
         const bool wasOverloaded = mIsOverloaded;
         CheckIfOverloaded();
+        //过载了?
         if(mIsOverloaded != wasOverloaded)
         {
-            KFS_LOG_STREAM_INFO <<
-                                (mIsOverloaded ?
-                                 "System is now in overloaded state" :
-                                 "Clearing system overload state") <<
-                                " " << mNumBytesToSend << " bytes to send" <<
-                                KFS_LOG_EOM;
+            KFS_LOG_STREAM_INFO << (mIsOverloaded ? "System is now in overloaded state" :
+                                                    "Clearing system overload state")
+                                << " " << mNumBytesToSend << " bytes to send" << KFS_LOG_EOM;
             // Turn on read only if returning from overloaded state.
             // Turn off read in the event processing loop if overloaded, and
             // read event is pending.
@@ -413,8 +408,7 @@ NetManager::MainLoop()
             {
                 for (int i = 0; i <= kTimerWheelSize; i++)
                 {
-                    for (List::iterator c = mTimerWheel[i].begin();
-                            c != mTimerWheel[i].end(); )
+                    for (List::iterator c = mTimerWheel[i].begin(); c != mTimerWheel[i].end(); )
                     {
                         assert(*c);
                         NetConnection& conn = **c;
@@ -428,8 +422,7 @@ NetManager::MainLoop()
         mWaker.Wake();
         if (ret < 0 && ret != -EINTR && ret != -EAGAIN)
         {
-            KFS_LOG_STREAM_ERROR << QCUtils::SysError(-ret, "poll error")
-                                 << KFS_LOG_EOM;
+            KFS_LOG_STREAM_ERROR << QCUtils::SysError(-ret, "poll error") << KFS_LOG_EOM;
         }
         const int64_t nowMs = ITimeout::NowMs();
         mNow = time_t(nowMs / 1000);
@@ -468,27 +461,30 @@ NetManager::MainLoop()
             }
             // Defer update for this connection.
             mCurConnection = &conn;
+            //为了调试使用?
             if (mPollEventHook)
             {
                 mPollEventHook->Event(*this, conn, op);
             }
+            //可读或者hup
+            //没有过载或者设置了过载仍然可读
             if ((op & (QCFdPoll::kOpTypeIn | QCFdPoll::kOpTypeHup)) != 0 &&
                  conn.IsGood() &&
                  (!mIsOverloaded || conn.GetNetManagerEntry()->mEnableReadIfOverloaded))
             {
                 conn.HandleReadEvent();
             }
-            
+            //可写?，这个事件99%都是为真的吧
             if ((op & QCFdPoll::kOpTypeOut) != 0 && conn.IsGood())
             {
                 conn.HandleWriteEvent();
             }
-            
+
             if ((op & QCFdPoll::kOpTypeError) != 0 && conn.IsGood())
             {
                 conn.HandleErrorEvent();
             }
-            
+
             // Try to write, if the last write was sucessfull.
             conn.StartFlush();
             // Update the connection.

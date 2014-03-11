@@ -35,14 +35,14 @@ using namespace KFS::libkfsio;
 ///
 /// Create a TCP socket, bind it to the port, and listen for incoming connections.
 ///
-Acceptor::Acceptor(NetManager& netManager, int port, IAcceptorOwner *owner): 
+Acceptor::Acceptor(NetManager& netManager, int port, IAcceptorOwner *owner):
 mPort(port),
 mAcceptorOwner(owner),
 mConn(),
 mNetManager(netManager)
 {
     SET_HANDLER(this, &Acceptor::RecvConnection);
-    //构造函数中就直接监听了
+    //鏋勯�犲嚱鏁颁腑灏辩洿鎺ョ洃鍚簡
     Acceptor::Listen();
 }
 
@@ -131,18 +131,18 @@ Acceptor::RecvConnection(int code, void *data)
         abort();
         break;
     }
-    if (! data)
+    if (!data)
     {
         KFS_LOG_STREAM_FATAL <<
                              "Unexpected null argument, event code: " << code <<
                              KFS_LOG_EOM;
         abort();
     }
-    NetConnectionPtr conn = *(NetConnectionPtr *) data;
+    NetConnectionPtr conn = *(NetConnectionPtr*)data;
     KfsCallbackObj * const obj = mAcceptorOwner->CreateKfsCallbackObj(conn);
-    if (conn)
+    if(conn)
     {
-        if (obj)
+        if(obj)
         {
             conn->SetOwningKfsCallbackObj(obj);
             mNetManager.AddConnection(conn);

@@ -41,7 +41,7 @@ void NetConnection::HandleReadEvent()
 {
     if (!IsGood())
     {
-        NET_CONNECTION_LOG_STREAM_DEBUG << "read event ignored: fd closed" 
+        NET_CONNECTION_LOG_STREAM_DEBUG << "read event ignored: fd closed"
                                         << KFS_LOG_EOM;
     }
     else if (mListenOnly)
@@ -56,12 +56,12 @@ void NetConnection::HandleReadEvent()
         }
         else
         {
-            NET_CONNECTION_LOG_STREAM_DEBUG << " accept failure: " 
-                                            << QCUtils::SysError(errno) 
-                                            << " open fd:"" net: "  
-                                            << globals().ctrOpenDiskFds.GetValue() 
-                                            << " disk: " 
-                                            << globals().ctrOpenNetFds.GetValue() 
+            NET_CONNECTION_LOG_STREAM_DEBUG << " accept failure: "
+                                            << QCUtils::SysError(errno)
+                                            << " open fd:"" net: "
+                                            << globals().ctrOpenDiskFds.GetValue()
+                                            << " disk: "
+                                            << globals().ctrOpenNetFds.GetValue()
                                             << KFS_LOG_EOM;
         }
     }
@@ -70,8 +70,8 @@ void NetConnection::HandleReadEvent()
         const int nread = mInBuffer.Read(mSock->GetFd(), maxReadAhead);
         if (nread <= 0 && nread != -EAGAIN && nread != -EINTR)
         {
-            NET_CONNECTION_LOG_STREAM_DEBUG << "read: " 
-                                            << (nread == 0 ? "EOF" : QCUtils::SysError(-nread)) 
+            NET_CONNECTION_LOG_STREAM_DEBUG << "read: "
+                                            << (nread == 0 ? "EOF" : QCUtils::SysError(-nread))
                                             << KFS_LOG_EOM;
             mCallbackObj->HandleEvent(EVENT_NET_ERROR, NULL);
         }
@@ -93,8 +93,8 @@ void NetConnection::HandleWriteEvent()
         nwrote = IsWriteReady() ? mOutBuffer.Write(mSock->GetFd()) : 0;
         if (nwrote < 0 && nwrote != -EAGAIN && nwrote != -EINTR)
         {
-            NET_CONNECTION_LOG_STREAM_DEBUG << "write: error: " 
-                                            << QCUtils::SysError(-nwrote) 
+            NET_CONNECTION_LOG_STREAM_DEBUG << "write: error: "
+                                            << QCUtils::SysError(-nwrote)
                                             << KFS_LOG_EOM;
 
             mCallbackObj->HandleEvent(EVENT_NET_ERROR, NULL);
@@ -121,17 +121,19 @@ void NetConnection::HandleTimeoutEvent()
     const int timeOut = GetInactivityTimeout();
     if (timeOut < 0)
     {
-        NET_CONNECTION_LOG_STREAM_DEBUG <<
-                                        "ignoring timeout event, time out value: " << timeOut <<
-                                        KFS_LOG_EOM;
+        NET_CONNECTION_LOG_STREAM_DEBUG << "ignoring timeout event, time out value: "
+                                        << timeOut << KFS_LOG_EOM;
     }
     else
     {
-        NET_CONNECTION_LOG_STREAM_DEBUG << "inactivity timeout:" <<
-                                        " read-ahead: " << maxReadAhead <<
-                                        " in: "  << mInBuffer.BytesConsumable() <<
-                                        " out: " << mOutBuffer.BytesConsumable() <<
-                                        KFS_LOG_EOM;
+        NET_CONNECTION_LOG_STREAM_DEBUG << "inactivity timeout:"
+                                        << " read-ahead: "
+                                        << maxReadAhead
+                                        << " in: "
+                                        << mInBuffer.BytesConsumable()
+                                        << " out: "
+                                        << mOutBuffer.BytesConsumable()
+                                        << KFS_LOG_EOM;
         mCallbackObj->HandleEvent(EVENT_INACTIVITY_TIMEOUT, NULL);
     }
     Update();

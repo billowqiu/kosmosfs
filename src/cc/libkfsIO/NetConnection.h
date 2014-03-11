@@ -147,18 +147,18 @@ public:
     bool IsReadReady() const
     {
         return (maxReadAhead != 0);
-    };
+    }
 
     /// Is data available for reading?
     bool HasPendingRead() const
     {
-        return (! mInBuffer.IsEmpty());
+        return (!mInBuffer.IsEmpty());
     }
 
     /// Is data available for writing?
     bool IsWriteReady() const
     {
-        return (! mOutBuffer.IsEmpty());
+        return (!mOutBuffer.IsEmpty());
     }
 
     /// # of bytes available for writing(false),
@@ -266,7 +266,7 @@ public:
     /// Close the connection.
     void Close()
     {
-        if (! mSock)
+        if (!mSock)
         {
             return;
         }
@@ -319,19 +319,21 @@ public:
     public:
         typedef std::list<NetConnectionPtr, boost::fast_pool_allocator<NetConnectionPtr> > List;
 
-        NetManagerEntry()
-            : mIn(false),
-              mOut(false),
-              mAdded(false),
-              mEnableReadIfOverloaded(false),
-              mConnectPending(false),
-              mFd(-1),
-              mWriteByteCount(0),
-              mTimerWheelSlot(-1),
-              mExpirationTime(-1),
-              mNetManager(0),
-              mListIt()
-        {}
+        NetManagerEntry():
+        mIn(false),
+        mOut(false),
+        mAdded(false),
+        mEnableReadIfOverloaded(false),
+        mConnectPending(false),
+        mFd(-1),
+        mWriteByteCount(0),
+        mTimerWheelSlot(-1),
+        mExpirationTime(-1),
+        mNetManager(0),
+        mListIt()
+        {
+        }
+
         void EnableReadIfOverloaded()
         {
             mEnableReadIfOverloaded  = true;
@@ -386,17 +388,17 @@ private:
     /// KfsCallbackObj that will be notified whenever "events" occur.
     KfsCallbackObj	*mCallbackObj;
     /// Socket on which I/O will be done.
-    TcpSocket*          mSock;
+    TcpSocket* mSock;
     /// Buffer that contains data read from the socket
-    IOBuffer		mInBuffer;
+    IOBuffer mInBuffer;
     /// Buffer that contains data that should be sent out on the socket.
-    IOBuffer		mOutBuffer;
+    IOBuffer mOutBuffer;
 
     /// When was the last activity on this connection
     /// # of bytes from the out buffer that should be sent out.
-    int			mInactivityTimeoutSecs;
-    int                 maxReadAhead;
-    std::string         mPeerName;
+    int mInactivityTimeoutSecs;
+    int maxReadAhead;
+    std::string mPeerName;
 
 private:
     // No copies.
